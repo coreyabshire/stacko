@@ -20,6 +20,20 @@ df_converters = {"PostCreationDate": dateutil.parser.parse,
                  "OwnerCreationDate": dateutil.parser.parse}
                 # "PostClosedDate": parse_date_maybe_null}
 
+# It may be more convenient to get rid of the labels and just use
+# numeric identifiers for the categories. I would want to do this
+# in the order given below, which models the relative frequency of
+# each category in the training set provided. This has the added
+# convenience that open vs closed becomes 0 vs not 0. I can always
+# look up the text labels later in the array given below.
+
+labels = [
+    'open',
+    'not a real question',
+    'off topic',
+    'not constructive',
+    'too localized']
+
 def get_reader(file_name="train-sample.csv"):
     reader = csv.reader(open(os.path.join(data_path, file_name)))
     header = reader.next()

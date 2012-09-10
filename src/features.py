@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 import re
 import pickle
+import nltk
 
 def camel_to_underscores(name):
     s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', name)
