@@ -1,8 +1,8 @@
 import competition_utilities as cu
-import features
+from basic_features import extract_features
 from sklearn.ensemble import RandomForestClassifier
 
-train_file = "train.csv"
+train_file = "train-sample.csv"
 full_train_file = "train.csv"
 test_file = "public_leaderboard.csv"
 submission_file = "basic_benchmark.csv"
@@ -20,15 +20,15 @@ def main():
     data = cu.get_dataframe(train_file)
 
     print("Extracting features")
-    fea = features.extract_features(feature_names, data)
+    fea = extract_features(feature_names, data)
 
     print("Training the model")
-    rf = RandomForestClassifier(n_estimators=50, verbose=2, compute_importances=True, n_jobs=1)
+    rf = RandomForestClassifier(n_estimators=50, verbose=2, compute_importances=True, n_jobs=-1)
     rf.fit(fea, data["OpenStatus"])
 
     print("Reading test file and making predictions")
     data = cu.get_dataframe(test_file)
-    test_features = features.extract_features(feature_names, data)
+    test_features = extract_features(feature_names, data)
     probs = rf.predict_proba(test_features)
 
     print("Calculating priors and updating posteriors")
