@@ -9,7 +9,7 @@ import os
 import pandas as pd
 import pymongo
 
-data_path = "C:/Projects/ML/stacko/data"
+data_path = "C:/Projects/ML/stacko/data2"
 submissions_path = data_path
 if not data_path or not submissions_path:
     raise Exception("Set the data and submission paths in competition_utilities.py!")
@@ -116,6 +116,11 @@ def get_dataframe_mongo_query(query):
 def get_sample_data_frame(limit=0):
     db = pymongo.Connection().stacko
     return pd.DataFrame([r for r in db.sample2.find(limit=limit)])
+
+def get_sample_data_frame_by_status(status, limit=0):
+    db = pymongo.Connection().stacko
+    return pd.DataFrame([r for r in db.sample2.find(
+                {"OpenStatus": status}, limit=limit)])
 
 def get_test_data_frame(limit=0):
     db = pymongo.Connection().stacko

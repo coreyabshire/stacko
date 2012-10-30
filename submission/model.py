@@ -4,9 +4,9 @@ from features import extract_features
 from sklearn.ensemble import RandomForestClassifier
 import onlineldavb
 
-train_file = "train-sample.csv"
-full_train_file = "train.csv"
-test_file = "public_leaderboard.csv"
+train_file = "train-sample_October_9_2012_v2.csv"
+full_train_file = "train_October_9_2012.csv"
+test_file = "private_leaderboard.csv"
 submission_file = "submission.csv"
 
 feature_names = [ "BodyLength"
@@ -21,19 +21,19 @@ feature_names = [ "BodyLength"
 
 def main():
     # The number of documents to analyze each iteration
-    batchsize = 1000
+    batchsize = 100
 
     # The total number of questions on Stack Overflow
     D = 3.3e6
 
     # The number of topics
-    K = 100
+    K = 20
 
     # Make sure the topics are included as features for analysis
     feature_names.extend('Topic%d' % k for k in range(K))
 
     print("Reading the vocabulary")
-    vocab = file('./vocab2.txt').readlines()
+    vocab = [w.strip() for w in file('./vocab4.txt')]
 
     # How many words are in the vocabulary
     W = len(vocab)
@@ -52,7 +52,7 @@ def main():
 
     print("Training the model")
     rf = RandomForestClassifier(n_estimators=50, verbose=2,
-                                compute_importances=True, n_jobs=-1)
+                                compute_importances=True, n_jobs=4)
     rf.fit(fea, data["OpenStatus"])
 
     print("Reading test file and making predictions")

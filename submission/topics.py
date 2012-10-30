@@ -2,44 +2,10 @@ import competition_utilities as cu
 import numpy
 import pandas as pd
 import onlineldavb
+import re
 
 def istag(x):
     return not pd.isnull(x) #(x is not None) and (x != 'nan')
-
-class QuestionSetCSV:
-
-    def __init__(self, filename):
-        self.filename = filename
-        self.file = open(filename, 'rb')
-        self.reader = csv.reader(self.file)
-        self.header = self.reader.next()
-
-    def parse_doc(self, row):
-        title = row['Title']
-        body = row['BodyMarkdown']
-        tags = ' '.join(filter(istag, [row['Tag%d' % t] for t in range(1,6)]))
-        postid = row['PostId']
-        doc = ' '.join([title, body, tags])
-        name = postid
-        return doc, name
-        
-    def get_batch(self, size):
-        docset = []
-        articlenames = []
-        for i in range(size):
-            try:
-                line = self.reader.next()
-                row = dict(zip(self.header, line))
-                doc, name = self.parse_doc(row)
-                docset.append(doc)
-                articlenames.append(name)
-            except e:
-                print e
-                pass
-        return docset, articlenames
-
-    def close(self):
-        self.file.close()
 
 class QuestionSet:
 
@@ -55,12 +21,22 @@ class QuestionSet:
         name = postid
         return doc, name
         
+    def parse_doc_no_code(self, row):
+        title = row['Title']
+        code_pattern = re.compile(r'^(?: {4}|\t).*$', re.M)
+        body = code_pattern.sub('', row['BodyMarkdown'])
+        tags = ' '.join(filter(istag, [row['Tag%d' % t] for t in range(1,6)]))
+        postid = row['PostId']
+        doc = ' '.join([title, body, tags])
+        name = postid
+        return doc, name
+
     def get_batch(self, start, end):
         docset = []
         articlenames = []
         for i in range(start, end):
             row = self.dataframe.ix[i]
-            doc, name = self.parse_doc(row)
+            doc, name = self.parse_doc_no_code(row)
             docset.append(doc)
             articlenames.append(name)
         return docset, articlenames
